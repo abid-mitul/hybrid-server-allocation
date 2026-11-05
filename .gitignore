@@ -1,0 +1,10 @@
+   __pycache__/
+   *.pyc
+   .ipynb_checkpoints/
+   # outputs written by the scripts (published results are in results/)
+   data/
+   logs/
+   progress/
+   results/analysis/all_episodes.csv
+   *.db
+   .DS_Store
