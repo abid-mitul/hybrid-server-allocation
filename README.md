@@ -135,4 +135,9 @@ MIT License. See `LICENSE`.
 
 ## Contact
 
-Md Abid Hassan Mitul (mitul.mdabidhassan@gmail.com)
+**Md Abid Hassan Mitul**
+
+- Email: mitul.mdabidhassan@gmail.com
+- Website: https://abid-mitul.github.io
+- ORCID: https://orcid.org/0000-0003-4268-9873
+- LinkedIn: https://www.linkedin.com/in/mitul-abid
