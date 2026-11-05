@@ -1,0 +1,21 @@
+# Hybrid server allocation: stochastic modelling + deep reinforcement learning
+# Python 3.9 or higher
+
+# Core simulation
+simpy>=4.0.1,<5.0
+numpy>=1.24.0
+numba>=0.58          # compiles the fast simulator (fast_env.py)
+
+# RL environment and PPO
+gymnasium>=0.29.0,<1.0
+stable-baselines3>=2.0.0,<3.0
+
+# Genetic algorithm baseline
+deap>=1.4.0,<2.0
+
+# Statistics and data
+pandas>=2.0.0
+scipy>=1.11.0
+
+# Plotting
+matplotlib>=3.7.0

@@ -1,0 +1,8 @@
+{
+  "stable": 1.5158,
+  "degraded": 1.2022,
+  "noisy": 1.2944,
+  "adaptive_stable": 1.645,
+  "adaptive_degraded": 1.2123,
+  "adaptive_noisy": 1.3929
+}

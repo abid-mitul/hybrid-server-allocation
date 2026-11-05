@@ -1,0 +1,54 @@
+{
+  "name": "journal_v1",
+  "train": {
+    "networks": [
+      "stable",
+      "degraded",
+      "noisy"
+    ],
+    "seeds": [
+      42,
+      142,
+      242,
+      342,
+      442
+    ],
+    "timesteps": 200000,
+    "n_machines": [
+      80,
+      200,
+      350
+    ],
+    "episode_duration": 1800,
+    "step_duration": 60,
+    "init_state": "stationary",
+    "w_c": 0.05,
+    "degraded_congestion": true,
+    "observe_first": true,
+    "obs_include_c": true,
+    "w_switch": 0.01
+  },
+  "ppo": {
+    "learning_rate": 0.0003,
+    "n_steps_total": 2048,
+    "batch_size": 256,
+    "n_epochs": 10,
+    "gamma": 0.9,
+    "gae_lambda": 0.95,
+    "clip_range": 0.2,
+    "ent_coef": 0.01,
+    "net_arch": [
+      128,
+      128,
+      64
+    ]
+  },
+  "eval": {
+    "episodes": 20,
+    "episode_duration": 1800,
+    "include_ga": true,
+    "seed_base": 1000
+  },
+  "n_envs": "auto",
+  "checkpoint_minutes": 10
+}

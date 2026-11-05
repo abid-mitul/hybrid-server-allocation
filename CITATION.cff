@@ -1,0 +1,13 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite it as below."
+title: "Integrating Stochastic Optimization and Deep Reinforcement Learning for Resource Allocation in Industrial Multi-Server Systems: code and data"
+authors:
+  - family-names: Mitul
+    given-names: Md Abid Hassan
+    affiliation: "Department of Mathematics, Dhaka University of Engineering & Technology (DUET)"
+  - family-names: Akhter
+    given-names: Most. Nasrin
+    affiliation: "Department of Mathematics, Dhaka University of Engineering & Technology (DUET)"
+license: MIT
+version: "1.0"
+date-released: 2026-11-05
