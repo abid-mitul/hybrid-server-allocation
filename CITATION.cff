@@ -1,13 +1,22 @@
 cff-version: 1.2.0
 message: "If you use this code, please cite it as below."
-title: "Integrating Stochastic Optimization and Deep Reinforcement Learning for Resource Allocation in Industrial Multi-Server Systems: code and data"
+title: "Hybrid server allocation for industrial multi-server systems: code, trained models and results"
 authors:
   - family-names: Mitul
     given-names: Md Abid Hassan
     affiliation: "Department of Mathematics, Dhaka University of Engineering & Technology (DUET)"
-  - family-names: Akhter
-    given-names: Most. Nasrin
-    affiliation: "Department of Mathematics, Dhaka University of Engineering & Technology (DUET)"
+    email: mitul.mdabidhassan@gmail.com
 license: MIT
 version: "1.0"
 date-released: 2026-11-05
+repository-code: "https://github.com/abid-mitul/hybrid-server-allocation"
+preferred-citation:
+  type: article
+  title: "Integrating Stochastic Optimization and Deep Reinforcement Learning for Resource Allocation in Industrial Multi-Server Systems"
+  authors:
+    - family-names: Mitul
+      given-names: Md Abid Hassan
+    - family-names: Akhter
+      given-names: Most. Nasrin
+  year: 2026
+  notes: "Manuscript in preparation"
