@@ -121,6 +121,42 @@ It is the best the queueing analysis can do when nothing is estimated. Where the
 - Results: add the oracle as a reference column. State that "best fixed" understates what adaptation can achieve only when the population changes.
 - Discussion: mention the false alarm under doubled congestion, a case for calibrating κ as well as µ.
 
+## Framing decision
+
+The author chose **option A**. The contribution is the self-calibrating queueing model plus the statistical validity test. The fallback on alarm is a design choice: six servers or the PPO ensemble, and the two are compared openly.
+
+## Item 4. Regime knowledge removed: done
+
+**Method** (`regime_agnostic.py`). The regime is estimated online, with no new measurements.
+- For each settled window (same c as the window before, no blocking, sojourn below T_SLA), the controller computes the log-ratio of measured to predicted mean sojourn under each regime. It picks the regime whose running mean log-ratio is closest to zero.
+- Under nominal conditions the regimes are 0.21–0.49 apart in this log-ratio, with a window-to-window spread of 0.02–0.10.
+- The mismatch test compares each window with the regime estimated *before* that window.
+- One alarm threshold (1.4064) is calibrated on nominal runs pooled over the three regimes and the training loads. It lies within the range of the three regime-specific thresholds, 1.21–1.65.
+- The learned fallback uses only the agents trained on the stable network.
+- Nothing in the controller depends on the true regime.
+
+**Results** (69 scenarios, measured utilisation, common seeds):
+
+| Controller | Seen | Unseen | Param. | Struct. | Mean | Worst |
+|---|---|---|---|---|---|---|
+| Self-calibrating model, regime known | 0.003 | −0.043 | 0.001 | 0.492 | 0.209 | 1.932 |
+| Self-calibrating model, regime estimated | 0.000 | −0.044 | −0.001 | 0.441 | 0.186 | 1.482 |
+| Model + test + c = 6, regime known | 0.003 | −0.042 | 0.010 | 0.112 | **0.047** | **0.629** |
+| Model + test + c = 6, regime estimated | 0.000 | −0.044 | 0.003 | 0.128 | 0.051 | 0.703 |
+| Model + test + PPO, regime known (v1.1 proposed) | 0.003 | −0.042 | 0.011 | 0.128 | 0.053 | 0.789 |
+| Model + test + PPO (stable agents), regime estimated | 0.000 | −0.044 | −0.000 | 0.145 | 0.058 | 0.866 |
+
+Paired tests, regime-agnostic vs. regime-aware (better / same / worse): model 6/62/1; c = 6 fallback 6/59/4; PPO fallback 4/62/3.
+
+- **Within the model** (seen, unseen and parameter mismatch), knowing the regime brings nothing. The agnostic versions are equal or slightly better: the regime is identified correctly in about 92% of decisions on the seen and unseen loads, and the misses are in the first two windows and at N = 350, where every regime calls for six servers.
+- **One side benefit:** under doubled congestion, the regime estimate absorbs the extra delay and the false alarm noted in item 3 almost disappears. On the degraded network the shortfall falls from 0.140 to 0.037.
+- **Under structural mismatch, there is some masking.** Bursty traffic or bursty service at N = 200 on the stable and noisy networks is read as a heavier regime: the regime is correct in only 0–10% of those decisions, and the alarm fires less often (fallback share 0.43–0.61, against about 0.9 with the regime known). Structural shortfall rises from 0.112 to 0.128 for the c = 6 fallback, and the worst case from 0.629 to 0.703.
+
+**Recommended text** (Section 5 and Limitations). Present the regime-aware controller as the configuration for a site whose network has been characterised once at commissioning; the regime is a property of the installation that changes rarely. Report the online estimator as the fully agnostic variant, which costs 0.004 in mean shortfall. State the masking mechanism plainly: an online estimate can partly absorb a structural departure. Point out that the regime should therefore be estimated during commissioning, or only during windows in which the model is known to hold.
+
 ## Remaining items
 
-Items 4–22 are still open. Item 4 (removing the controller's knowledge of the true network regime) is the last must-do experiment.
+Under option A, the validity test is the core contribution, so the order of the remaining should-do items changes:
+- **Item 5 (CUSUM or another sequential change-detection test) becomes essential.** It is the natural competitor to the persistence counter, and it may also reduce the delayed or missed alarms that cause both the structural losses and the masking above.
+- **Item 6 (supervised classifier vs. DRL) matters less.** PPO is now one fallback option, not the core.
+- **Items 8–18 (text) and 19–22 (submission package)** are unchanged.
