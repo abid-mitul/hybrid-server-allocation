@@ -8,6 +8,8 @@ already do.  Training (PPO agents, GA rule, alarm thresholds) is unchanged.
     python rerun_measured_util.py --network stable      # repeat for degraded, noisy
     python rerun_measured_util.py --network stable --oracle --only slowservers_stable
                                                           # reproduction check
+    python rerun_measured_util.py --network stable --config experiment_config_server_cost_x2.json \
+        --models models_server_cost_x2 --tag _wc010   # doubled server-cost study (Table 10)
 
 Writes data/measured/eval_<net>.csv with the same columns as the published
 result files, so analysis/build_results_measured.py can rebuild the tables.
@@ -24,10 +26,10 @@ from hybrid_policy import HybridPolicy, load_thresholds
 from variants import EnsemblePolicy, AdaptiveModelPolicy, HybridAdaptivePolicy
 
 
-def build_policies(net, cfg):
+def build_policies(net, cfg, models="models"):
     tr = cfg["train"]; opt = env_options(tr); thr = load_thresholds()
     kw = dict(w_c=opt["w_c"], w_switch=opt["w_switch"], deg_cong=opt["degraded_congestion"])
-    ppos = [PPOPolicy(Path("models") / net / f"ppo_seed_{s}.zip", "ppo", s) for s in tr["seeds"]]
+    ppos = [PPOPolicy(Path(models) / net / f"ppo_seed_{s}.zip", "ppo", s) for s in tr["seeds"]]
     t0 = time.time(); ga = fit_ga(net, cfg)
     print(f"    GA fitted in {time.time() - t0:.0f}s, thresholds "
           f"{[round(x, 3) for x in ga.thresholds]}", flush=True)
@@ -48,12 +50,17 @@ if __name__ == "__main__":
     ap.add_argument("--oracle", action="store_true", help="keep the old utilisation (check)")
     ap.add_argument("--only", default=None, help="evaluate a single scenario")
     ap.add_argument("--policies", default=None, help="comma-separated policy names")
+    ap.add_argument("--config", default="experiment_config.json")
+    ap.add_argument("--models", default="models", help="folder of trained PPO agents")
+    ap.add_argument("--tag", default="", help="suffix of the output folder")
     a = ap.parse_args(); net = a.network
-    cfg = json.load(open("experiment_config.json")); ev, tr = cfg["eval"], cfg["train"]
+    cfg = json.load(open(a.config)); ev, tr = cfg["eval"], cfg["train"]
     scen = {**scenarios_for(net), **extra_scenarios_for(net)}
+    if a.tag:                       # doubled server-cost study: the 8 original scenarios
+        scen = scenarios_for(net)
     if a.only:
         scen = {a.only: scen[a.only]}
-    pols = build_policies(net, cfg)
+    pols = build_policies(net, cfg, a.models)
     if a.policies:
         keep = a.policies.split(",")
         pols = [p for p in pols if p.name in keep]
@@ -74,7 +81,7 @@ if __name__ == "__main__":
                                  policy=pol.name, train_seed=getattr(pol, "train_seed", ""),
                                  episode=ep, eval_seed=seed, **extra, **res))
         print(f"    {sname}: {len(pols)} policies in {time.time() - t0:.0f}s", flush=True)
-    out = Path("data") / ("oracle_check" if a.oracle else "measured")
+    out = Path("data") / (("oracle_check" if a.oracle else "measured") + a.tag)
     out.mkdir(parents=True, exist_ok=True)
     name = f"eval_{net}{'_' + a.only if a.only else ''}.csv"
     pd.DataFrame(rows).to_csv(out / name, index=False)

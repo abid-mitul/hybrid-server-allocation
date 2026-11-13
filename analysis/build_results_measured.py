@@ -1,6 +1,7 @@
 """Revision item 1: rebuild the 69-scenario shortfall table and the paired tests
 with the non-structural scenarios re-run under measured utilisation
-(data/measured/eval_<net>.csv, produced by rerun_measured_util.py), and compare
+(results/revision/measured_util/, copied from data/measured/ after
+rerun_measured_util.py), and compare
 them with the published results.  Output: results/analysis_measured/
 """
 import os, sys
@@ -40,7 +41,7 @@ def revised():
     old = published()
     old['group'] = old.scenario.map(grp)
     struct = old[old.group == 'structural']
-    new = pd.concat([pd.read_csv(os.path.join(ROOT, 'data', 'measured', f'eval_{n}.csv'))
+    new = pd.concat([pd.read_csv(os.path.join(RES, 'revision', 'measured_util', f'eval_{n}.csv'))
                      for n in NETS], ignore_index=True)
     return pd.concat([struct, new], ignore_index=True)
 
