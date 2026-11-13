@@ -60,18 +60,20 @@ def delay_cdf(t, mean_delay, mode, deg_cong):
     return 0.5 * f_exp + 0.5 * f_par
 
 
-def expected_step_reward(lam, c, mode, w_c, deg_cong, mu=None):
+def expected_step_reward(lam, c, mode, w_c, deg_cong, mu=None, eta=None):
     """Predicted mean reward of one decision step at arrival rate lam with c servers
-    (mu: service rate to assume; default the nominal rate)."""
+    (mu: service rate to assume; eta: congestion coefficient to assume;
+    defaults: the nominal values)."""
     K = SERVER["K"]
     mu = SERVER["mu"] if mu is None else mu
+    eta = LATENCY["eta"] if eta is None else eta
     p = mmck_probs(lam, mu, c, K)
     p_b = p[K]
     acc = p[:K] / max(1.0 - p_b, 1e-12)            # what accepted arrivals see
     k = np.arange(K)
     n_wait = np.maximum(k - c, 0)                   # waiting tasks seen
     e_wait = np.where(k >= c, (k - c + 1) / (c * mu), 0.0)
-    mean_delay = LATENCY["delta_0"] + LATENCY["eta"] * (n_wait / c) ** LATENCY["beta"]
+    mean_delay = LATENCY["delta_0"] + eta * (n_wait / c) ** LATENCY["beta"]
     budget = T_SLA - e_wait - 1.0 / mu
     eta_d = float(np.sum(acc * delay_cdf(budget, mean_delay, mode, deg_cong)))
     eta_x = lam * (1.0 - p_b) / LAMBDA_MAX

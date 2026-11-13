@@ -92,6 +92,35 @@ Paired tests, hybrid vs. fallback, Holm-adjusted over eight comparisons per scen
 - **(B) Keep PPO as the fallback and show where it pays off.** Report the fallback baseline, argue for PPO where it saves servers or avoids oscillation (high variance, bursty service), and add a server-cost-weighted comparison. The overall numbers favour the fallback, so reviewers may still push back.
 - **(C) Improve the learned mode.** For example, train the agents with structural disturbances or with the alarm state in the observation. The structural group would then no longer be a clean out-of-sample test, so new held-out structural cases would be needed. This is the most work.
 
+## Item 3. Oracle adaptive baseline: done
+
+**Baseline.** `evaluate_oracle.py` applies the model rule (21), with the same horizon and switching cost, using perfect information instead of estimates. At each decision it reads from the simulator:
+- the true arrival rate of the next window, including a population change scheduled for that window;
+- the true processing rate of the active servers, including mixed speeds;
+- the true congestion coefficient.
+
+It is the best the queueing analysis can do when nothing is estimated. Where the model's structure holds (39 scenarios), it is the upper reference. Under structural mismatch it is *not* an upper bound. The run covers all 69 scenarios with the common seeds; the analysis is in `analysis/compare_oracle.py`.
+
+**Results.**
+
+| | Seen | Unseen | Param. | Struct. |
+|---|---|---|---|---|
+| Oracle vs. best fixed (negative = oracle better) | −0.037 | −0.052 | −0.001 | +0.127 |
+| Gap of the hybrid to the oracle | 0.041 | 0.009 | 0.012 | 0.000 |
+| Gap of the self-calibrating model to the oracle | 0.041 | 0.009 | 0.002 | 0.365 |
+| Gap of the PPO ensemble to the oracle | 0.061 | 0.056 | 0.135 | −0.024 |
+
+- **The best fixed allocation is essentially optimal except when the population changes.** In the 33 in-model scenarios with a constant population, the oracle improves on it by only 0.001, and the hybrid is within **0.008** of the oracle.
+- **The gap is concentrated in the six population-change scenarios** (burst 200 → 350 and drop 350 → 200). There the oracle beats the best fixed allocation by 0.151, because it knows of the change before the window in which it happens. The hybrid trails the oracle by 0.089 there: it can only react one window later, so this is a gap in information, not in modelling.
+- **Over all 39 in-model scenarios,** the hybrid's gap to the oracle is 0.020, which is 0.29% of the oracle's reward. Paired tests (hybrid better / no difference / worse than the oracle) give 0/30/9 in-model, mainly in the burst scenarios.
+- **One false alarm stands out.** Under doubled congestion on the degraded network, the hybrid trails the oracle by 0.140, while the self-calibrating model alone trails it by 0.000. The calibration corrects µ but not κ, so the mismatch test fires and hands control to the ensemble unnecessarily.
+- **Under structural mismatch, perfect parameters do not help.** The oracle loses up to 0.654 to the best fixed allocation (batched traffic, bursty traffic and bursty service at N = 200). The hybrid and the fallback beat the oracle in those scenarios. This shows directly that the structure of the model, not its parameters, limits the analysis there, which supports the role of the validity test.
+
+**Text consequences.**
+- Abstract (item 8): replace "about one percent of the achievable reward" with a statement against both references. For example: within 0.3% of a perfect-information model-based oracle wherever the model's structure holds, and 1.0% below the best fixed allocation on average over all 69 scenarios.
+- Results: add the oracle as a reference column. State that "best fixed" understates what adaptation can achieve only when the population changes.
+- Discussion: mention the false alarm under doubled congestion, a case for calibrating κ as well as µ.
+
 ## Remaining items
 
-Items 3–22 are still open. Item 3 (the oracle adaptive baseline c*(Λ_true)) is the next experiment.
+Items 4–22 are still open. Item 4 (removing the controller's knowledge of the true network regime) is the last must-do experiment.
