@@ -194,3 +194,23 @@ Under option A, the validity test is the core contribution, so the order of the 
 - **Optional follow-up:** CUSUM with the regime-agnostic estimator from item 4. Faster detection may also reduce the masking found there.
 - **Item 6 (supervised classifier vs. DRL) matters less.** PPO is now one fallback option, not the core.
 - **Items 8–18 (text) and 19–22 (submission package)** are unchanged.
+
+## Deferred until the full paper update (author's instruction)
+
+Apply these only when the author asks for the whole paper to be updated.
+
+1. **Section 4.6:** extend the sensitivity analysis to the parameters not yet varied, then update Figure 5. The missing ones are:
+   - the restoration and repair-initiation rates (q10, q21);
+   - the Pareto shape ξ;
+   - the task-rate ratio λ1/λ0.
+2. **Table 5:** add a column "How obtained in practice / how errors are handled". Examples:
+   - µ: server log; calibrated online.
+   - q01: maintenance records; not used by the controller.
+   - κ: fitted to logged response times; loss ≤ 0.005.
+3. **Defence of the estimates** (Section 6.3 and the response letter). Group the parameters:
+   - The load parameters (q's, λ0, λ1) are not used by the controller, because Λ is estimated online.
+   - µ is the only parameter whose error matters, and it is calibrated online.
+   - The delay and buffer parameters have negligible effect: a loss of at most 0.005, and none for K.
+   - T_SLA, the reward weights, the server and switching costs, τ and the server range are the operator's design choices, not estimates.
+4. **The 3 ms processing time:** cite Burger et al., ICPE 2019 (OPC UA server processing cycles of about 0.4–4.5 ms) for the order of magnitude only. Add the scale-invariance argument and the online calibration.
+5. **Wording:** write "falls back to the maximum capacity c_max" rather than "six servers". Explain that c_max = 6 is sized to the peak load of the largest plant (350 machines × 5 tasks/s = 1,750 tasks/s, against 6 × 333 ≈ 2,000 tasks/s), and note that larger plants would scale the range.
