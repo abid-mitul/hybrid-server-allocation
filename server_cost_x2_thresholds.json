@@ -1,0 +1,7 @@
+{
+  "tau": 1.645,
+  "k_ref": 0.2489,
+  "h": 0.695,
+  "nominal_alarms_persistence": 4,
+  "nominal_alarms_cusum": 4
+}
