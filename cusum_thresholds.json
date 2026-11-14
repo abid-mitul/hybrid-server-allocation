@@ -1,0 +1,26 @@
+{
+  "stable": {
+    "tau": 1.645,
+    "k_ref": 0.2489,
+    "h": 0.695,
+    "nominal_alarms_persistence": 4,
+    "nominal_alarms_cusum": 4,
+    "decisions": 900
+  },
+  "degraded": {
+    "tau": 1.2123,
+    "k_ref": 0.0963,
+    "h": 0.3,
+    "nominal_alarms_persistence": 2,
+    "nominal_alarms_cusum": 2,
+    "decisions": 900
+  },
+  "noisy": {
+    "tau": 1.3929,
+    "k_ref": 0.1657,
+    "h": 0.825,
+    "nominal_alarms_persistence": 2,
+    "nominal_alarms_cusum": 2,
+    "decisions": 900
+  }
+}
