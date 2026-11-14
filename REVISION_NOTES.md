@@ -154,9 +154,43 @@ Paired tests, regime-agnostic vs. regime-aware (better / same / worse): model 6/
 
 **Recommended text** (Section 5 and Limitations). Present the regime-aware controller as the configuration for a site whose network has been characterised once at commissioning; the regime is a property of the installation that changes rarely. Report the online estimator as the fully agnostic variant, which costs 0.004 in mean shortfall. State the masking mechanism plainly: an online estimate can partly absorb a structural departure. Point out that the regime should therefore be estimated during commissioning, or only during windows in which the model is known to hold.
 
+## Item 5. CUSUM change detection: done
+
+**Method** (`cusum_test.py`). Only the entry rule of the validity test changes.
+- The persistence test ("ratio above τ in two consecutive windows") is replaced by a one-sided CUSUM on the log-ratio of measured to predicted sojourn time:
+  S_k = max(0, S_{k−1} + log r_k − k_ref), with an alarm when S_k > h.
+- The allowance is k_ref = ½·log τ, half the log-shift that the existing threshold is built to detect.
+- The model, the ratio, the exit rule (three windows with r ≤ τ) and the fallbacks are all unchanged; S is reset on exit.
+- **Equal false alarms:** h is calibrated on the same nominal runs as τ, so that the CUSUM raises exactly as many alarms as the persistence test: 4, 2 and 2 in 900 nominal decisions. This gives h = 0.695, 0.300 and 0.825 for the stable, degraded and noisy networks.
+- Both tests are therefore compared at the same nominal false-alarm rate.
+
+**Results** (regime-aware, 69 scenarios, measured utilisation, common seeds):
+
+| Controller | Seen | Unseen | Param. | Struct. | Mean | Worst |
+|---|---|---|---|---|---|---|
+| Model + **CUSUM** + c = 6 | 0.003 | −0.041 | 0.012 | **0.078** | **0.032** | **0.481** |
+| Model + persistence + c = 6 | 0.003 | −0.042 | 0.010 | 0.112 | 0.047 | 0.629 |
+| Model + **CUSUM** + PPO ensemble | 0.003 | −0.041 | 0.014 | 0.098 | 0.042 | 0.671 |
+| Model + persistence + PPO (v1.1 proposed) | 0.003 | −0.042 | 0.011 | 0.128 | 0.053 | 0.789 |
+| Fixed c = 6 | 0.417 | 0.311 | 0.139 | 0.064 | 0.177 | 1.381 |
+
+- **CUSUM vs. persistence, paired tests** (better / same / worse): 8/60/1 with the c = 6 fallback and 8/60/1 with the PPO fallback. All gains are in the structural group, mainly bursty traffic, bursty service and batches. There is no significant loss on the seen or unseen loads.
+- **Detection delay.** In the structural scenarios the first alarm comes in window 1.17 on average, against 2.29 for the persistence test, so CUSUM is about one window faster. That window is most of the loss before the alarm.
+- **False alarms.** On the seen loads, alarms occur in 9% of episodes against 8%, and the share of decisions in fallback is 1% for both.
+  - On the unseen loads, CUSUM raises an alarm in 49% of episodes, against 18%. These are mainly the population changes (burst and drop), where the model really is out of date for a window. These alarms cost nothing: the unseen shortfall is −0.041 against −0.042.
+  - In the parameter-mismatch group: 45% of episodes against 30%, again at no significant cost (0/18/0 with the c = 6 fallback).
+- **Comparison with fixed c = 6.** Model + CUSUM + c = 6 is now within 0.014 of fixed c = 6 under structural mismatch (0.078 against 0.064). On the seen loads it is 0.414 better, and over all 69 scenarios it is 0.145 better.
+- **The single loss** is high-variance service at N = 200 on the degraded network (0.22 against 0.19), where an early alarm hands over to c = 6 when fewer servers would have sufficed.
+
+**Recommended proposed controller under option A:** self-calibrating model + CUSUM validity test + c = 6 fallback. Its mean shortfall is 0.032 and its worst 0.481, compared with 0.059 and 0.789 for the v1.1 hybrid.
+- The persistence test stays in the paper as the simpler variant.
+- The PPO ensemble stays as the learned alternative fallback, reported honestly: it does not beat c = 6 overall.
+- The equal-false-alarm calibration of h is a clear methodological point to explain in Section 5.
+
 ## Remaining items
 
 Under option A, the validity test is the core contribution, so the order of the remaining should-do items changes:
-- **Item 5 (CUSUM or another sequential change-detection test) becomes essential.** It is the natural competitor to the persistence counter, and it may also reduce the delayed or missed alarms that cause both the structural losses and the masking above.
+- **Item 5 (CUSUM):** done, see above.
+- **Optional follow-up:** CUSUM with the regime-agnostic estimator from item 4. Faster detection may also reduce the masking found there.
 - **Item 6 (supervised classifier vs. DRL) matters less.** PPO is now one fallback option, not the core.
 - **Items 8–18 (text) and 19–22 (submission package)** are unchanged.
