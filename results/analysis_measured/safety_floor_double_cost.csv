@@ -1,0 +1,4 @@
+policy,seen,unseen,parameter,structural,mean,worst
+cusum_fallback_c6,-0.053,-0.192,0.09,0.278,0.11,0.786
+cusum_hybrid_ppo,-0.053,-0.192,0.056,0.272,0.099,1.079
+cusum_floor_ppo,-0.053,-0.192,0.009,0.264,0.083,1.066
