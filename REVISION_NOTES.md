@@ -262,3 +262,16 @@ At double cost the autoscaler is slightly better on the seen loads, and Hybrid B
 - the oracle (upper reference).
 
 **Still to run before writing:** Hybrid B on the regime-agnostic setting (item 4), and at double cost on the degraded and noisy networks, if reviewers are expected to ask.
+
+### Final checks of Hybrid B (15 Nov 2026)
+
+| Check | Hybrid B: mean / worst | Best other: mean / worst | Paired tests vs. autoscaler |
+|---|---|---|---|
+| Regime-agnostic, normal cost, 69 scenarios | 0.036 / 0.649 (regime-aware: 0.030 / 0.402) | autoscaler 0.063 / 0.661 | 17/47/5 |
+| Double cost, degraded network, 23 scenarios | **0.057 / 0.306** | autoscaler 0.078 / 0.637 | 1/17/5 |
+| Double cost, noisy network, 23 scenarios | **0.042 / 0.447** | c_max fallback 0.057 / 0.476 | 8/8/7 |
+
+- **Hybrid B has the lowest mean and the lowest worst case in every check.**
+- **Regime-agnostic:** not knowing the regime costs 0.006 in mean shortfall. Hybrid B is still the best regime-agnostic controller, ahead of the c_max fallback (6/63/0).
+- **Double cost:** on the degraded and noisy networks Hybrid B uses the stable-trained w_C = 0.10 agents (transfer), with τ, h and the autoscaler target recalibrated for each network on nominal runs only.
+- **Limitation to state:** at double cost, the autoscaler is slightly better on the seen and unseen loads, by up to about 0.03. On the degraded network it is significantly better in 5 of 23 scenarios. Hybrid B's advantage comes from the parameter and structural mismatch cases.
