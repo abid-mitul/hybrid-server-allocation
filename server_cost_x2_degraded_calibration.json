@@ -1,0 +1,7 @@
+{
+  "tau": 1.2123,
+  "h": 0.3,
+  "hpa_target": 0.6,
+  "nominal_alarms_persistence": 2,
+  "agents": "trained on the stable network at w_C = 0.10 (transfer)"
+}
