@@ -1,0 +1,6 @@
+policy,seen,unseen,parameter,structural,mean,worst
+fixed_c6,1.041,0.923,0.663,0.367,0.634,2.881
+ppo_ensemble,-0.078,-0.101,0.64,0.275,0.26,1.559
+autoscaler_hpa,-0.078,-0.049,0.036,0.27,0.107,0.603
+cusum_fallback_c6,-0.053,-0.192,0.09,0.278,0.11,0.786
+cusum_floor_ppo,-0.053,-0.192,0.009,0.264,0.083,1.066
