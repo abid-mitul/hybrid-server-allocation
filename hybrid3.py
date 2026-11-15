@@ -31,8 +31,9 @@ from autoscaler import HPAPolicy
 
 class Hybrid3Policy(CusumHybridPolicy):
     def __init__(self, *a, hpa_target, use_model_floor, **kw):
-        super().__init__(*a, **kw)
+        # set before the parent constructor, which calls reset()
         self.hpa, self.use_model_floor = HPAPolicy(hpa_target), use_model_floor
+        super().__init__(*a, **kw)
 
     def reset(self):
         super().reset()
