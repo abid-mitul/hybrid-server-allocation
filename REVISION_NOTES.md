@@ -214,3 +214,51 @@ Apply these only when the author asks for the whole paper to be updated.
    - T_SLA, the reward weights, the server and switching costs, τ and the server range are the operator's design choices, not estimates.
 4. **The 3 ms processing time:** cite Burger et al., ICPE 2019 (OPC UA server processing cycles of about 0.4–4.5 ms) for the order of magnitude only. Add the scale-invariance argument and the online calibration.
 5. **Wording:** write "falls back to the maximum capacity c_max" rather than "six servers". Explain that c_max = 6 is sized to the peak load of the largest plant (350 machines × 5 tasks/s = 1,750 tasks/s, against 6 × 333 ≈ 2,000 tasks/s), and note that larger plants would scale the range.
+
+## Final design (confirmed by the author, 15 Nov 2026)
+
+**Proposed controller: three-component hybrid (Hybrid B, `hybrid3.py`).**
+1. **Normal operation:** the self-calibrating stochastic (queueing) model chooses the number of servers.
+2. **Validity test:** a CUSUM test on the model's own sojourn-time predictions detects when the model no longer holds. Its level is calibrated to the persistence test's nominal false-alarm rate.
+3. **After an alarm:** the PPO ensemble decides, but never below a safety floor. The floor is the larger of the model-free autoscaler's choice (Kubernetes HPA rule, target utilisation tuned on nominal runs) and the model's choice: c = max(c_PPO, c_HPA, c_model).
+4. **Return to the model:** after three consecutive windows within the threshold.
+
+No retraining is needed: the PPO agents are those of v1.1.
+
+| Controller | Normal cost (w_C = 0.05), 69 scenarios: mean / worst | Double cost (w_C = 0.10), stable, 23 scenarios: mean / worst |
+|---|---|---|
+| **Hybrid B (proposed)** | **0.030 / 0.402** | **0.050 / 0.572** |
+| Hybrid A (autoscaler floor only) | 0.030 / 0.402 | 0.052 / 0.604 |
+| Model + CUSUM + PPO, model floor | 0.041 / 0.664 | 0.083 / 1.066 |
+| Model + CUSUM + c_max fallback | 0.032 / 0.481 | 0.110 / 0.786 |
+| Autoscaler (HPA) alone | 0.063 / 0.661 | 0.107 / 0.603 |
+| PPO ensemble alone | 0.084 / 0.664 | 0.260 / 1.559 |
+| v1.1 hybrid (persistence + PPO) | 0.053 / 0.789 | 0.119 / — |
+
+Paired tests, Hybrid B vs. each controller (better / same / worse):
+
+| Hybrid B vs. | Normal cost | Double cost |
+|---|---|---|
+| Autoscaler | 15/49/5 | 7/10/6 |
+| c_max fallback | 3/66/0 | 5/18/0 |
+| Model-floor PPO | 2/66/1 | 2/20/1 |
+
+At double cost the autoscaler is slightly better on the seen loads, and Hybrid B is much better under parameter and structural mismatch.
+
+**Roles in the paper:**
+- **Stochastic model:** decides in normal operation and supplies the validity test.
+- **DRL:** decides when the model is invalid, and saves servers relative to c_max.
+- **Autoscaler:** a model-free safety floor that removes the under-provisioning failure under bursty traffic.
+
+**Baselines to report:**
+- fixed allocations, including always c_max;
+- the threshold rule and the GA-tuned rule;
+- the queueing model and the self-calibrating model;
+- a single PPO agent and the PPO ensemble;
+- the autoscaler (industry baseline, new);
+- the v1.1 hybrid;
+- model + CUSUM + c_max (ablation: no learning);
+- model + CUSUM + PPO without the autoscaler floor (ablation);
+- the oracle (upper reference).
+
+**Still to run before writing:** Hybrid B on the regime-agnostic setting (item 4), and at double cost on the degraded and noisy networks, if reviewers are expected to ask.
