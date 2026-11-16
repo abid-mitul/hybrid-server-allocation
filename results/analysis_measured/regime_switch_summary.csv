@@ -1,0 +1,6 @@
+policy,degraded_to_stable,stable_to_degraded,stable_to_noisy,mean,worst
+autoscaler_hpa,0.01,0.009,0.003,0.007,0.03
+adaptive_model,0.004,0.012,0.01,0.009,0.026
+cusum_fallback_c6,0.004,0.145,0.01,0.053,0.312
+hybrid3_B,0.004,0.013,0.01,0.009,0.028
+ra_hybrid3_B,0.004,0.004,0.003,0.004,0.012
