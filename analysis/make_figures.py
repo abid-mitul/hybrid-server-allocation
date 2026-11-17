@@ -25,20 +25,21 @@ def sla(lam,c,mode='stable'):
     md=LATENCY['delta_0']+LATENCY['eta']*(n/c)**LATENCY['beta']
     return float(np.sum(acc*delay_cdf(T_SLA-ew-1/mu,md,mode,dc))), p[K]
 N=np.arange(60,371,2)
-fig,ax=plt.subplots(2,1,figsize=(2.8,3.6),sharex=True,gridspec_kw={'hspace':0.22})
+fig,ax=plt.subplots(1,2,figsize=(5.8,2.5),gridspec_kw={'wspace':0.3})
 for c in (3,4,5,6):
     v=np.array([sla(n*rate,c) for n in N])
     for a,y in ((ax[0],v[:,1]),(ax[1],v[:,0])):
         a.plot(N,y,color=COL[c],ls=LS[c],lw=1.3,marker=MK[c],markevery=12,ms=3.5,mec='white',mew=0.5,label=f'$c={c}$')
 ax[0].set_ylabel('Blocking probability $P_B$'); ax[1].set_ylabel('SLA compliance $\\Pr(T\\leq T_{\\mathrm{SLA}})$')
-ax[1].set_xlabel('Number of machines $N$'); ax[1].set_ylim(0,1.02)
+for a in ax: a.set_xlabel('Number of machines $N$')
+ax[1].set_ylim(0,1.02)
 for a,lab in zip(ax,('(a)','(b)')):
-    a.grid(axis='y',color='#e6e6e3',lw=0.5); a.text(0.0,1.02,lab,transform=a.transAxes,va='bottom',fontsize=8)
-ax[0].legend(loc='upper left',bbox_to_anchor=(0.0,1.0),frameon=False,ncol=2,handlelength=2.4)
+    a.grid(axis='y',color='#e6e6e3',lw=0.5); a.text(0.0,1.03,lab,transform=a.transAxes,va='bottom',fontsize=9)
+ax[0].legend(loc='upper left',frameon=False,ncol=1,handlelength=2.4)
 fig.savefig(OUT+'fig3_queue_metrics.pdf',bbox_inches='tight')
 
 # Fig 4: expected reward per decision, stable network, with switching thresholds
-fig,ax=plt.subplots(figsize=(2.8,3.6))
+fig,ax=plt.subplots(figsize=(4.2,2.9))
 R=np.array([[expected_step_reward(n*rate,c,'stable',wc,dc) for c in (3,4,5,6)] for n in N])
 for j,c in enumerate((3,4,5,6)):
     ax.plot(N,R[:,j],color=COL[c],ls=LS[c],lw=1.3,marker=MK[c],markevery=12,ms=3.5,mec='white',mew=0.5,label=f'$c={c}$')
@@ -50,7 +51,7 @@ for x0,x1,c in ((60,thr[0],3),(thr[0],thr[1],4),(thr[1],thr[2],5),(thr[2],370,6)
     ax.text((x0+x1)/2,hi-0.012,f'$c^*\!={c}$',ha='center',va='top',fontsize=7,color='#333')
 ax.set_xlabel('Number of machines $N$'); ax.set_ylabel('Expected reward per decision $R(c,\\Lambda)$')
 ax.grid(axis='y',color='#e6e6e3',lw=0.5); ax.set_xlim(60,370)
-ax.legend(loc='lower center',bbox_to_anchor=(0.5,1.0),frameon=False,ncol=3,handlelength=1.8,columnspacing=0.6,fontsize=7)
+ax.legend(loc='lower center',bbox_to_anchor=(0.5,1.0),frameon=False,ncol=5,handlelength=1.8,columnspacing=0.8,fontsize=7.5)
 fig.savefig(OUT+'fig4_static_optimum.pdf',bbox_inches='tight')
 
 
