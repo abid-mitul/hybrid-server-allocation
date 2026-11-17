@@ -16,7 +16,7 @@ wc,dc=tr['w_c'],tr['degraded_congestion']; mu,K=SERVER['mu'],SERVER['K']
 rate=4.0905
 COL={3:'#2a78d6',4:'#eb6834',5:'#1baf7a',6:'#eda100'}; MK={3:'o',4:'s',5:'^',6:'D'}; LS={3:'-',4:'--',5:'-.',6:':'}
 plt.rcParams.update({'font.family':'serif','font.serif':['Times New Roman','Times','DejaVu Serif'],'mathtext.fontset':'stix',
- 'font.size':8,'axes.labelsize':8,'xtick.labelsize':7,'ytick.labelsize':7,'legend.fontsize':7,
+ 'font.size':8.5,'axes.labelsize':8.5,'xtick.labelsize':7.5,'ytick.labelsize':7.5,'legend.fontsize':7.5,
  'axes.linewidth':0.6,'axes.edgecolor':'#555','xtick.color':'#555','ytick.color':'#555','axes.labelcolor':'#222',
  'axes.spines.top':False,'axes.spines.right':False,'pdf.fonttype':42})
 def sla(lam,c,mode='stable'):
@@ -25,7 +25,7 @@ def sla(lam,c,mode='stable'):
     md=LATENCY['delta_0']+LATENCY['eta']*(n/c)**LATENCY['beta']
     return float(np.sum(acc*delay_cdf(T_SLA-ew-1/mu,md,mode,dc))), p[K]
 N=np.arange(60,371,2)
-fig,ax=plt.subplots(2,1,figsize=(3.45,3.9),sharex=True,gridspec_kw={'hspace':0.22})
+fig,ax=plt.subplots(2,1,figsize=(2.8,3.6),sharex=True,gridspec_kw={'hspace':0.22})
 for c in (3,4,5,6):
     v=np.array([sla(n*rate,c) for n in N])
     for a,y in ((ax[0],v[:,1]),(ax[1],v[:,0])):
@@ -38,7 +38,7 @@ ax[0].legend(loc='upper left',bbox_to_anchor=(0.0,1.0),frameon=False,ncol=2,hand
 fig.savefig(OUT+'fig3_queue_metrics.pdf',bbox_inches='tight')
 
 # Fig 4: expected reward per decision, stable network, with switching thresholds
-fig,ax=plt.subplots(figsize=(3.45,2.5))
+fig,ax=plt.subplots(figsize=(2.8,3.6))
 R=np.array([[expected_step_reward(n*rate,c,'stable',wc,dc) for c in (3,4,5,6)] for n in N])
 for j,c in enumerate((3,4,5,6)):
     ax.plot(N,R[:,j],color=COL[c],ls=LS[c],lw=1.3,marker=MK[c],markevery=12,ms=3.5,mec='white',mew=0.5,label=f'$c={c}$')
@@ -47,10 +47,10 @@ thr=[128.1,193.4,262.6]
 for t in thr: ax.axvline(t,color='#999',lw=0.6,ls=(0,(2,2)),zorder=0)
 lo,hi=-0.09,0.36; ax.set_ylim(lo,hi)
 for x0,x1,c in ((60,thr[0],3),(thr[0],thr[1],4),(thr[1],thr[2],5),(thr[2],370,6)):
-    ax.text((x0+x1)/2,hi-0.012,f'$c^*={c}$',ha='center',va='top',fontsize=7,color='#333')
+    ax.text((x0+x1)/2,hi-0.012,f'$c^*\!={c}$',ha='center',va='top',fontsize=7,color='#333')
 ax.set_xlabel('Number of machines $N$'); ax.set_ylabel('Expected reward per decision $R(c,\\Lambda)$')
 ax.grid(axis='y',color='#e6e6e3',lw=0.5); ax.set_xlim(60,370)
-ax.legend(loc='lower center',bbox_to_anchor=(0.5,1.0),frameon=False,ncol=3,handlelength=2.4,columnspacing=1.0)
+ax.legend(loc='lower center',bbox_to_anchor=(0.5,1.0),frameon=False,ncol=3,handlelength=1.8,columnspacing=0.6,fontsize=7)
 fig.savefig(OUT+'fig4_static_optimum.pdf',bbox_inches='tight')
 
 
@@ -76,7 +76,7 @@ ax.legend(frameon=False,loc='lower right',handlelength=2.6)
 fig.savefig(OUT+'fig_learning_curves.pdf',bbox_inches='tight')
 
 plt.rcParams.update({'font.family':'serif','font.serif':['Times New Roman','Times','DejaVu Serif'],'mathtext.fontset':'stix',
- 'font.size':8,'axes.labelsize':8,'xtick.labelsize':7,'ytick.labelsize':7,'legend.fontsize':7,'axes.linewidth':0.6,
+ 'font.size':8.5,'axes.labelsize':8.5,'xtick.labelsize':7.5,'ytick.labelsize':7.5,'legend.fontsize':7.5,'axes.linewidth':0.6,
  'axes.edgecolor':'#555','xtick.color':'#555','ytick.color':'#555','axes.labelcolor':'#222','axes.spines.top':False,'axes.spines.right':False,'pdf.fonttype':42})
 GRID=dict(axis='y',color='#e6e6e3',lw=0.5)
 PC={'ga':'#1baf7a','queueing_model':'#eb6834','adaptive_model':'#a3401a','ppo':'#8fb8ea','ppo_ensemble':'#2a78d6','hybrid_adaptive':'#222222'}
