@@ -139,7 +139,7 @@ lg.assign(c_applied=th.c, sla=th.sla).to_csv(os.path.join(RES, 'analysis_measure
 # ---------------------------------------------------------------- Fig 3: sensitivity (two regimes)
 rows = pd.DataFrame(json.load(open(V + 'sensitivity_extended.json')))
 lab = {'mu': '$\\mu$', 'fail': '$q_{01},q_{12}$', 'b10': '$q_{10}$', 'b21': '$q_{21}$', 'lam1': '$\\lambda_1$',
-       'eta': '$\\kappa$', 'beta': '$\\gamma$', 'd0': '$\\delta_0$', 'T': '$T_{\\mathrm{SLA}}$', 'K': '$K$',
+       'eta': '$\\kappa$', 'beta': '$\\beta$', 'd0': '$\\delta_0$', 'T': '$T_{\\mathrm{SLA}}$', 'K': '$K$',
        'wc': '$w_C$', 'xi': '$\\xi$'}
 CO = ['#2a78d6', '#eb6834', '#1baf7a']; KEYS = ['3->4', '4->5', '5->6']
 
@@ -155,7 +155,7 @@ def panel(ax, mode, order):
         if p == 'xi':
             yl.append(f"$\\xi={2.5 * s:g}$")
         elif p == 'beta':
-            yl.append(f"$\\gamma={1.4 * s:.1f}$")
+            yl.append(f"$\\beta={1.4 * s:.1f}$")
         else:
             yl.append(f"{lab[p]} $\\times${s:g}".replace('0.666667', '2/3').replace('1.33333', '4/3'))
     for key, c in zip(KEYS, CO): ax.axvline(nom[key], color=c, lw=0.6, ls=':')
