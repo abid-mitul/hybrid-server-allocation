@@ -25,7 +25,7 @@ def sla(lam,c,mode='stable'):
     md=LATENCY['delta_0']+LATENCY['eta']*(n/c)**LATENCY['beta']
     return float(np.sum(acc*delay_cdf(T_SLA-ew-1/mu,md,mode,dc))), p[K]
 N=np.arange(60,371,2)
-fig,ax=plt.subplots(2,1,figsize=(3.45,3.9),sharex=True,gridspec_kw={'hspace':0.12})
+fig,ax=plt.subplots(2,1,figsize=(3.45,3.9),sharex=True,gridspec_kw={'hspace':0.22})
 for c in (3,4,5,6):
     v=np.array([sla(n*rate,c) for n in N])
     for a,y in ((ax[0],v[:,1]),(ax[1],v[:,0])):
@@ -33,8 +33,8 @@ for c in (3,4,5,6):
 ax[0].set_ylabel('Blocking probability $P_B$'); ax[1].set_ylabel('SLA compliance $\\Pr(T\\leq T_{\\mathrm{SLA}})$')
 ax[1].set_xlabel('Number of machines $N$'); ax[1].set_ylim(0,1.02)
 for a,lab in zip(ax,('(a)','(b)')):
-    a.grid(axis='y',color='#e6e6e3',lw=0.5); a.text(0.01,0.95,lab,transform=a.transAxes,va='top',fontsize=8)
-ax[0].legend(loc='upper left',bbox_to_anchor=(0.08,1.0),frameon=False,ncol=2,handlelength=2.4)
+    a.grid(axis='y',color='#e6e6e3',lw=0.5); a.text(0.0,1.02,lab,transform=a.transAxes,va='bottom',fontsize=8)
+ax[0].legend(loc='upper left',bbox_to_anchor=(0.0,1.0),frameon=False,ncol=2,handlelength=2.4)
 fig.savefig(OUT+'fig3_queue_metrics.pdf',bbox_inches='tight')
 
 # Fig 4: expected reward per decision, stable network, with switching thresholds
