@@ -21,8 +21,8 @@ RV = os.path.join(RES, 'revision'); V = os.path.join(RES, 'analysis') + '/'
 NETS = ['stable', 'degraded', 'noisy']; CATS = ['seen', 'unseen', 'parameter', 'structural']
 CLAB = ['Seen', 'Unseen', 'Parameter\nmismatch', 'Structural\nmismatch']
 plt.rcParams.update({'font.family': 'serif', 'font.serif': ['Times New Roman', 'Times', 'DejaVu Serif'],
-                     'mathtext.fontset': 'stix', 'font.size': 8, 'axes.labelsize': 8, 'xtick.labelsize': 7,
-                     'ytick.labelsize': 7, 'legend.fontsize': 7, 'axes.linewidth': 0.6, 'axes.edgecolor': '#555',
+                     'mathtext.fontset': 'stix', 'font.size': 9, 'axes.labelsize': 9, 'xtick.labelsize': 8,
+                     'ytick.labelsize': 8, 'legend.fontsize': 8, 'axes.linewidth': 0.6, 'axes.edgecolor': '#555',
                      'xtick.color': '#555', 'ytick.color': '#555', 'axes.labelcolor': '#222',
                      'axes.spines.top': False, 'axes.spines.right': False, 'pdf.fonttype': 42})
 GRID = dict(axis='y', color='#e6e6e3', lw=0.5)
@@ -115,10 +115,10 @@ def trace(pol):
 
 ta, _ = trace(am); th, lg = trace(hb)
 st = np.arange(1, len(th) + 1)
-fig, axs = plt.subplots(3, 1, figsize=(3.45, 3.6), sharex=True, gridspec_kw={'hspace': 0.18})
+fig, axs = plt.subplots(3, 1, figsize=(4.6, 4.2), sharex=True, gridspec_kw={'hspace': 0.22})
 ax = axs[0]; ax.plot(st, lg.ratio, color='#222', lw=1.2, marker='o', ms=2)
 ax.axhline(thr['tau'], color='#d03b3b', lw=0.8, ls='--')
-ax.text(30.4, thr['tau'], 'threshold $\\psi^{*}$', color='#d03b3b', fontsize=6.5, va='bottom', ha='right')
+ax.text(30.4, thr['tau'], 'threshold $\\psi^{*}$', color='#d03b3b', fontsize=8, va='bottom', ha='right')
 for s, fb in zip(st, lg.fallback):
     if fb:
         for a in axs: a.axvspan(s - 0.5, s + 0.5, color='#2a78d6', alpha=0.10, lw=0)
@@ -151,7 +151,7 @@ def panel(ax, mode, order):
         rr = r[(r.param == p) & np.isclose(r.scale.astype(float), s)].iloc[0]
         for j, key in enumerate(KEYS):
             v = rr.th.get(key, np.nan); ax.plot([nom[key], v], [i, i], color='#bbb', lw=0.6, zorder=1)
-            ax.scatter(v, i, s=9, color=CO[j], zorder=2, label=['$3\\to4$', '$4\\to5$', '$5\\to6$'][j] if i == 0 else None)
+            ax.scatter(v, i, s=16, color=CO[j], zorder=2, label=['$3\\to4$', '$4\\to5$', '$5\\to6$'][j] if i == 0 else None)
         if p == 'xi':
             yl.append(f"$\\xi={2.5 * s:g}$")
         elif p == 'beta':
@@ -159,7 +159,7 @@ def panel(ax, mode, order):
         else:
             yl.append(f"{lab[p]} $\\times${s:g}".replace('0.666667', '2/3').replace('1.33333', '4/3'))
     for key, c in zip(KEYS, CO): ax.axvline(nom[key], color=c, lw=0.6, ls=':')
-    ax.set_yticks(range(len(order))); ax.set_yticklabels(yl, fontsize=6); ax.invert_yaxis()
+    ax.set_yticks(range(len(order))); ax.set_yticklabels(yl, fontsize=8); ax.invert_yaxis()
     ax.grid(axis='x', color='#e6e6e3', lw=0.5)
 
 
@@ -168,12 +168,12 @@ A = [('mu', 0.7), ('mu', 0.85), ('mu', 1.15), ('mu', 1.3), ('fail', 0.5), ('fail
      ('eta', 0.5), ('eta', 2.0), ('beta', 1.2 / 1.4), ('beta', 1.6 / 1.4), ('d0', 0.6), ('d0', 1.6),
      ('T', 2 / 3), ('T', 4 / 3), ('K', 0.6), ('K', 2.0), ('wc', 0.5), ('wc', 2.0)]
 B = [('xi', 2.1 / 2.5), ('xi', 3.0 / 2.5), ('xi', 4.0 / 2.5)]
-fig, axs = plt.subplots(2, 1, figsize=(3.45, 4.6), gridspec_kw={'height_ratios': [len(A), len(B) + 1.2], 'hspace': 0.28})
+fig, axs = plt.subplots(2, 1, figsize=(4.6, 5.6), gridspec_kw={'height_ratios': [len(A), len(B) + 1.2], 'hspace': 0.28})
 panel(axs[0], 'stable', A); panel(axs[1], 'degraded', B)
-axs[0].legend(frameon=False, loc='lower right', fontsize=6.5, handletextpad=0.2)
+axs[0].legend(frameon=False, loc='lower right', fontsize=8, handletextpad=0.2)
 axs[1].set_xlabel('Population size $N$ at which the static optimum switches')
-axs[0].text(0.005, 1.01, '(a) stable network', transform=axs[0].transAxes, fontsize=7, va='bottom')
-axs[1].text(0.005, 1.03, '(b) degraded network, Pareto shape', transform=axs[1].transAxes, fontsize=7, va='bottom')
+axs[0].text(0.005, 1.01, '(a) stable network', transform=axs[0].transAxes, fontsize=9, va='bottom')
+axs[1].text(0.005, 1.03, '(b) degraded network, Pareto shape', transform=axs[1].transAxes, fontsize=9, va='bottom')
 fig.savefig(OUT + 'fig_sensitivity_v2.pdf', bbox_inches='tight'); plt.close(fig)
 
 # ---------------------------------------------------------------- Fig 4: CUSUM detection speed
