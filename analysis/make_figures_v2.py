@@ -168,12 +168,17 @@ A = [('mu', 0.7), ('mu', 0.85), ('mu', 1.15), ('mu', 1.3), ('fail', 0.5), ('fail
      ('eta', 0.5), ('eta', 2.0), ('beta', 1.2 / 1.4), ('beta', 1.6 / 1.4), ('d0', 0.6), ('d0', 1.6),
      ('T', 2 / 3), ('T', 4 / 3), ('K', 0.6), ('K', 2.0), ('wc', 0.5), ('wc', 2.0)]
 B = [('xi', 2.1 / 2.5), ('xi', 3.0 / 2.5), ('xi', 4.0 / 2.5)]
-fig, axs = plt.subplots(2, 1, figsize=(4.6, 5.6), gridspec_kw={'height_ratios': [len(A), len(B) + 1.2], 'hspace': 0.28})
-panel(axs[0], 'stable', A); panel(axs[1], 'degraded', B)
-axs[0].legend(frameon=False, loc='lower right', fontsize=8, handletextpad=0.2)
-axs[1].set_xlabel('Population size $N$ at which the static optimum switches')
-axs[0].text(0.005, 1.01, '(a) stable network', transform=axs[0].transAxes, fontsize=9, va='bottom')
-axs[1].text(0.005, 1.03, '(b) degraded network, Pareto shape', transform=axs[1].transAxes, fontsize=9, va='bottom')
+fig = plt.figure(figsize=(6.4, 4.6))
+gs = fig.add_gridspec(len(A), 2, width_ratios=[1, 1], wspace=0.42)
+ax0 = fig.add_subplot(gs[:, 0]); ax1 = fig.add_subplot(gs[0:len(B) + 2, 1])
+panel(ax0, 'stable', A); panel(ax1, 'degraded', B)
+ax0.set_xlabel('Population size $N$ at which\nthe static optimum switches')
+ax1.set_xlabel('Population size $N$ at which\nthe static optimum switches')
+ax0.text(0.0, 1.01, '(a) stable network', transform=ax0.transAxes, fontsize=9, va='bottom')
+ax1.text(0.0, 1.03, '(b) degraded network, Pareto shape', transform=ax1.transAxes, fontsize=9, va='bottom')
+h, l = ax0.get_legend_handles_labels()
+fig.legend(h, l, frameon=False, loc='upper left', bbox_to_anchor=(0.6, 0.55), fontsize=8.5, handletextpad=0.3,
+           title='Switch of the static optimum', title_fontsize=8.5)
 fig.savefig(OUT + 'fig_sensitivity_v2.pdf', bbox_inches='tight'); plt.close(fig)
 
 # ---------------------------------------------------------------- Fig 4: CUSUM detection speed
