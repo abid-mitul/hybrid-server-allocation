@@ -30,7 +30,7 @@ PC = {'autoscaler_hpa': '#1baf7a', 'adaptive_model': '#a3401a', 'ppo_ensemble': 
       'cusum_fallback_c6': '#eda100', 'hybrid3_B': '#222222'}
 PL = {'autoscaler_hpa': 'Autoscaler', 'adaptive_model': 'Self-calibrating model',
       'ppo_ensemble': 'PPO ensemble', 'cusum_fallback_c6': 'Model + CUSUM + $c_{\\max}$',
-      'hybrid3_B': 'Proposed hybrid'}
+      'hybrid3_B': 'CHAMPS'}
 rd = lambda sub, pat: pd.concat([pd.read_csv(os.path.join(RV, sub, pat.format(n))) for n in NETS], ignore_index=True)
 
 
@@ -118,7 +118,7 @@ st = np.arange(1, len(th) + 1)
 fig, axs = plt.subplots(3, 1, figsize=(3.45, 3.6), sharex=True, gridspec_kw={'hspace': 0.18})
 ax = axs[0]; ax.plot(st, lg.ratio, color='#222', lw=1.2, marker='o', ms=2)
 ax.axhline(thr['tau'], color='#d03b3b', lw=0.8, ls='--')
-ax.text(30.4, thr['tau'], 'threshold $\\tau$', color='#d03b3b', fontsize=6.5, va='bottom', ha='right')
+ax.text(30.4, thr['tau'], 'threshold $\\psi^{*}$', color='#d03b3b', fontsize=6.5, va='bottom', ha='right')
 for s, fb in zip(st, lg.fallback):
     if fb:
         for a in axs: a.axvspan(s - 0.5, s + 0.5, color='#2a78d6', alpha=0.10, lw=0)
@@ -184,7 +184,7 @@ names = {'highvar': 'High\nvariance', 'bursty': 'Bursty\ntraffic', 'mixedspeed':
          'batch': 'Batch\narrivals', 'svcburst': 'Bursty\nservice'}
 fa = al[al.first_alarm >= 0].groupby(['kind', 'policy']).first_alarm.mean().unstack().reindex(list(names))
 fig, ax = plt.subplots(figsize=(3.45, 2.1)); W = 0.34
-for j, (p, c, l) in enumerate([('persistence_probe', '#bbbbbb', 'Persistence test ($n_{\\mathrm{on}}=2$)'),
+for j, (p, c, l) in enumerate([('persistence_probe', '#bbbbbb', 'Persistence test ($m_{\\mathrm{on}}=2$)'),
                                ('cusum_fallback_c6', '#222222', 'CUSUM')]):
     ax.bar(np.arange(len(fa)) + (j - 0.5) * (W + 0.02), fa[p] + 1, width=W, color=c, label=l, zorder=2)
 ax.set_xticks(range(len(fa))); ax.set_xticklabels([names[x] for x in fa.index])
@@ -195,7 +195,7 @@ fig.savefig(OUT + 'fig_cusum_detection.pdf', bbox_inches='tight'); plt.close(fig
 # ---------------------------------------------------------------- Fig 5: server cost
 P5 = ['autoscaler_hpa', 'cusum_fallback_c6', 'cusum_floor_ppo', 'hybrid3_B']
 L5 = {'autoscaler_hpa': 'Autoscaler', 'cusum_fallback_c6': '$c_{\\max}$ fallback',
-      'cusum_floor_ppo': 'PPO, model floor', 'hybrid3_B': 'Proposed hybrid'}
+      'cusum_floor_ppo': 'PPO, model floor', 'hybrid3_B': 'CHAMPS'}
 fl = rd('safety_floor', 'eval_floor_{}.csv')
 n1 = shortfall(pd.concat([base, fl], ignore_index=True), P5)
 x2s = pd.read_csv(os.path.join(RV, 'server_cost_x2', 'eval_stable.csv'))
