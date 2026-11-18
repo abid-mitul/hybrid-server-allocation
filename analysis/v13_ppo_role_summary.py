@@ -37,8 +37,8 @@ def best_fixed(study):
 
 def load(study):
     if study == "switch":
-        return pd.read_csv("data/v13/ppo_role_switch.csv")
-    return pd.concat([pd.read_csv(f"data/v13/ppo_role_{study}_{n}.csv") for n in NETS])
+        return pd.read_csv("data/v13/ppo_role_switch.csv", dtype={"actions": str, "modes": str})
+    return pd.concat([pd.read_csv(f"data/v13/ppo_role_{study}_{n}.csv", dtype={"actions": str, "modes": str}) for n in NETS])
 
 
 def identity(d):

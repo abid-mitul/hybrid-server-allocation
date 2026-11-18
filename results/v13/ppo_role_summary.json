@@ -1,0 +1,110 @@
+{
+ "normal": {
+  "study": "normal",
+  "shortfall": {
+   "champs": {
+    "seen": 0.0035,
+    "unseen": -0.0407,
+    "mismatch": 0.0096,
+    "structural": 0.0746,
+    "mean": 0.0302,
+    "worst": 0.4023
+   },
+   "no_agents": {
+    "seen": 0.0035,
+    "unseen": -0.0416,
+    "mismatch": 0.0007,
+    "structural": 0.133,
+    "mean": 0.0532,
+    "worst": 0.5711
+   }
+  },
+  "champs_better": 4,
+  "champs_worse": 2,
+  "n_scenarios": 69,
+  "binding_pct": {
+   "ppo_sole": 21.1,
+   "hpa_sole": 3.8,
+   "model_sole": 0.0,
+   "tie": 75.0,
+   "ppo_in_max": 95.5,
+   "ppo_below_floor": 4.5,
+   "learned_decisions": 13883
+  },
+  "identity_mismatch": "0/1380",
+  "mean_servers": {
+   "champs": 5.402,
+   "no_agents": 5.325
+  }
+ },
+ "x2": {
+  "study": "x2",
+  "shortfall": {
+   "champs": {
+    "seen": -0.027,
+    "unseen": -0.1486,
+    "mismatch": 0.0139,
+    "structural": 0.1613,
+    "mean": 0.0497,
+    "worst": 0.5721
+   },
+   "no_agents": {
+    "seen": -0.027,
+    "unseen": -0.1521,
+    "mismatch": 0.0081,
+    "structural": 0.1921,
+    "mean": 0.0611,
+    "worst": 0.5091
+   }
+  },
+  "champs_better": 9,
+  "champs_worse": 9,
+  "n_scenarios": 69,
+  "binding_pct": {
+   "ppo_sole": 22.8,
+   "hpa_sole": 5.1,
+   "model_sole": 0.1,
+   "tie": 72.0,
+   "ppo_in_max": 93.1,
+   "ppo_below_floor": 6.9,
+   "learned_decisions": 14931
+  },
+  "identity_mismatch": "0/1380",
+  "mean_servers": {
+   "champs": 4.981,
+   "no_agents": 4.84
+  }
+ },
+ "switch": {
+  "study": "switch",
+  "shortfall": {
+   "champs": {
+    "switch": 0.0089,
+    "mean": 0.0089,
+    "worst": 0.0281
+   },
+   "no_agents": {
+    "switch": 0.0086,
+    "mean": 0.0086,
+    "worst": 0.025
+   }
+  },
+  "champs_better": 0,
+  "champs_worse": 0,
+  "n_scenarios": 9,
+  "binding_pct": {
+   "ppo_sole": 0.5,
+   "hpa_sole": 0.2,
+   "model_sole": 0.3,
+   "tie": 99.0,
+   "ppo_in_max": 99.5,
+   "ppo_below_floor": 0.5,
+   "learned_decisions": 577
+  },
+  "identity_mismatch": "0/180",
+  "mean_servers": {
+   "champs": 4.629,
+   "no_agents": 4.628
+  }
+ }
+}
