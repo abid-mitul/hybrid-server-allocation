@@ -1,0 +1,10 @@
+scenario,champs,no_agents,group
+degraded_to_stable_N200,0.0,0.0,switch
+degraded_to_stable_N350,0.011937905736736809,0.011937905736736809,switch
+degraded_to_stable_N80,0.0,0.0,switch
+stable_to_degraded_N200,0.02805240169283696,0.024972817120037405,switch
+stable_to_degraded_N350,0.00968220580808321,0.00968220580808321,switch
+stable_to_degraded_N80,0.0,0.0,switch
+stable_to_noisy_N200,0.020988370218945285,0.020988370218945285,switch
+stable_to_noisy_N350,0.009376381068053163,0.009376381068053163,switch
+stable_to_noisy_N80,0.0,0.0,switch
