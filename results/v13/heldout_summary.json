@@ -1,0 +1,93 @@
+{
+ "learned_share_pct": {
+  "H1": 74.2,
+  "H2": 24.9,
+  "H3": 3.2
+ },
+ "binding_pct": {
+  "H1": {
+   "ppo_sole": 16.6,
+   "hpa_sole": 0.3,
+   "model_sole": 0.0,
+   "tie": 83.1,
+   "learned_decisions": 2672
+  },
+  "H2": {
+   "ppo_sole": 21.9,
+   "hpa_sole": 0.1,
+   "model_sole": 0.0,
+   "tie": 78.0,
+   "learned_decisions": 896
+  },
+  "H3": {
+   "ppo_sole": 0.0,
+   "hpa_sole": 0.0,
+   "model_sole": 0.0,
+   "tie": 100.0,
+   "learned_decisions": 114
+  }
+ },
+ "failures_per_episode_H2": 5.27,
+ "mean_servers": {
+  "H1": {
+   "champs": 5.61,
+   "no_agents": 5.49,
+   "autoscaler_hpa": 5.46,
+   "adaptive_model": 5.47,
+   "fixed_c6": 6.0
+  },
+  "H2": {
+   "champs": 5.53,
+   "no_agents": 5.47,
+   "autoscaler_hpa": 5.4,
+   "adaptive_model": 5.47,
+   "fixed_c6": 6.0
+  },
+  "H3": {
+   "champs": 5.47,
+   "no_agents": 5.47,
+   "autoscaler_hpa": 5.4,
+   "adaptive_model": 5.47,
+   "fixed_c6": 6.0
+  }
+ },
+ "best_fixed_mean_by_type": {
+  "H1": 6.652832567012211,
+  "H2": 6.705901631871325,
+  "H3": 6.870825748548316
+ },
+ "best_fixed_c": {
+  "h1_200_degraded": "fixed_c5",
+  "h1_200_noisy": "fixed_c5",
+  "h1_200_stable": "fixed_c5",
+  "h1_280_degraded": "fixed_c6",
+  "h1_280_noisy": "fixed_c6",
+  "h1_280_stable": "fixed_c6",
+  "h2_200_degraded": "fixed_c5",
+  "h2_200_noisy": "fixed_c5",
+  "h2_200_stable": "fixed_c5",
+  "h2_280_degraded": "fixed_c6",
+  "h2_280_noisy": "fixed_c6",
+  "h2_280_stable": "fixed_c6",
+  "h3_200_degraded": "fixed_c5",
+  "h3_200_noisy": "fixed_c5",
+  "h3_200_stable": "fixed_c5",
+  "h3_280_degraded": "fixed_c6",
+  "h3_280_noisy": "fixed_c6",
+  "h3_280_stable": "fixed_c6"
+ },
+ "within_0.05": {
+  "fixed_c6": 9,
+  "fixed_priority": 9,
+  "ga": 9,
+  "autoscaler_hpa": 14,
+  "queueing_model": 17,
+  "adaptive_model": 17,
+  "ppo": 10,
+  "ppo_ensemble": 12,
+  "cusum_fallback_c6": 13,
+  "no_agents": 18,
+  "champs": 15,
+  "oracle_model": 16
+ }
+}
