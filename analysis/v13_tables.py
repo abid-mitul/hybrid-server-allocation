@@ -18,7 +18,7 @@ from scipy import stats as st
 
 ROOT = Path(__file__).resolve().parents[1]; os.chdir(ROOT)
 sys.path.insert(0, str(ROOT / "analysis"))
-from build_results_measured import revised, grp
+from build_results_measured import revised, published, grp
 from stats import _holm
 
 OUT = Path("results/v13"); OUT.mkdir(parents=True, exist_ok=True)
@@ -50,6 +50,7 @@ def compare(df, comps, ref=REF):
         for c in comps:
             b = pe[(pe.scenario == sc) & (pe.policy == c)].set_index("eval_seed").total_reward
             d = (a - b).dropna(); ds.append(d.mean())
+            assert len(d) == len(a) > 0, (sc, c)          # every controller in every scenario
             ps.append(1.0 if np.allclose(d, 0) else st.wilcoxon(d).pvalue)
         for c, d, p in zip(comps, ds, _holm(np.array(ps))):
             res[c][0 if (p < .05 and d > 0) else 2 if p < .05 else 1] += 1
@@ -67,7 +68,7 @@ def write_md(tab, name, cols):
 
 
 # ------------------------------------------------------------------ main study
-NAMES = [("fixed_c6", "Fixed c_max = 6"), ("fixed_priority", "Threshold rule"), ("ga", "GA-tuned rule"),
+NAMES = [("fixed_c6", "Fixed c_max = 6"), ("round_robin", "Round-Robin"), ("fixed_priority", "Threshold rule"), ("ga", "GA-tuned rule"),
          ("autoscaler_hpa", "Autoscaler"), ("queueing_model", "Queueing model"),
          ("adaptive_model", "Self-calibrating model"), ("ppo", "PPO (single agent)"),
          ("ppo_ensemble", "PPO ensemble"), ("hybrid_adaptive", "+ persistence + PPO ensemble"),
@@ -77,12 +78,27 @@ NAMES = [("fixed_c6", "Fixed c_max = 6"), ("fixed_priority", "Threshold rule"), 
          ("hybrid3_B", "CHAMPS"), ("oracle_model", "Perfect-information model policy")]
 
 
-def main_tables():
+def round_robin():
+    """Round-Robin in all 69 scenarios.  It ignores the observation, so its
+    episodes do not depend on how utilisation is measured; the episodes of the
+    published run are identical to a rerun with measured utilisation (checked
+    on medium_stable and slowservers_noisy) and are used for the 39
+    non-structural scenarios that the revision did not rerun."""
+    d = published(); return d[d.policy == "round_robin"]
+
+
+def main_df():
+    """Episodes of every controller in the 69-scenario main study (nominal cost)."""
     cu = rd("cusum", "eval_cusum_{}.csv"); cu = cu[cu.policy != "persistence_probe"]
-    df = pd.concat([revised(), rd("fallback", "eval_fallback_{}.csv"), cu,
-                    rd("safety_floor", "eval_floor_{}.csv"), rd("autoscaler", "eval_hpa_{}.csv"),
-                    rd("hybrid3", "eval_h3_{}.csv"), rd("oracle", "eval_oracle_{}.csv"), v13("normal")],
-                   ignore_index=True)
+    rv = revised(); rv = rv[rv.policy != "round_robin"]
+    return pd.concat([rv, round_robin(), rd("fallback", "eval_fallback_{}.csv"), cu,
+                      rd("safety_floor", "eval_floor_{}.csv"), rd("autoscaler", "eval_hpa_{}.csv"),
+                      rd("hybrid3", "eval_h3_{}.csv"), rd("oracle", "eval_oracle_{}.csv"), v13("normal")],
+                     ignore_index=True)
+
+
+def main_tables():
+    df = main_df()
     P = [p for p, _ in NAMES]
     sf, tests = compare(df, [p for p in P if p != REF])
     sf = sf[P]; g = sf.index.map(grp)
@@ -96,7 +112,7 @@ def main_tables():
                                           "within_0.05", "tests"])
     print(tab.round(3).to_string())
     # Appendix B: by scenario type
-    cols = ["fixed_c6", "fixed_priority", "ga", "autoscaler_hpa", "queueing_model", "adaptive_model",
+    cols = ["fixed_c6", "round_robin", "fixed_priority", "ga", "autoscaler_hpa", "queueing_model", "adaptive_model",
             "ppo_ensemble", "cusum_fallback_c6", "no_agents", "hybrid3_B", "oracle_model"]
     bt = sf[cols].copy(); bt["type"] = [s.rsplit("_", 1)[0] for s in bt.index]
     bt.groupby("type")[cols].mean().round(3).to_csv(OUT / "table_bytype.csv")

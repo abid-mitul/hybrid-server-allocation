@@ -8,6 +8,7 @@ paired episodes, Holm-adjusted over the comparisons of each scenario,
 p < 0.05).  Single PPO agents are reported as the mean over the five agents of
 each regime, as in the main study.  Also: learned-mode share and binding shares
 of CHAMPS per type, failures per episode (H2), and mean servers.
+Round-Robin comes from c3_round_robin.py (same scenarios and seeds).
 Writes results/v13/heldout_table.csv and results/v13/heldout_summary.json
 """
 import json, os
@@ -18,7 +19,7 @@ from scipy.stats import wilcoxon
 
 ROOT = Path(__file__).resolve().parents[1]; os.chdir(ROOT)
 OUT = Path("results/v13"); OUT.mkdir(parents=True, exist_ok=True)
-ORDER = ["fixed_c6", "fixed_priority", "ga", "autoscaler_hpa", "queueing_model", "adaptive_model",
+ORDER = ["fixed_c6", "round_robin", "fixed_priority", "ga", "autoscaler_hpa", "queueing_model", "adaptive_model",
          "ppo", "ppo_ensemble", "cusum_fallback_c6", "no_agents", "champs", "oracle_model"]
 
 
@@ -30,7 +31,8 @@ def holm(p):
 
 
 def main():
-    d = pd.concat([pd.read_csv(f"data/v13/c3_{n}.csv") for n in ("stable", "degraded", "noisy")])
+    d = pd.concat([pd.read_csv(f"data/v13/c3{x}_{n}.csv") for x in ("", "_rr")   # _rr: c3_round_robin.py
+                   for n in ("stable", "degraded", "noisy")], ignore_index=True)
     ep = d.groupby(["scenario", "policy", "eval_seed"]).total_reward.mean().reset_index()   # PPO: mean of 5
     w = ep.groupby(["scenario", "policy"]).total_reward.mean().unstack()
     bf = w[[f"fixed_c{c}" for c in (3, 4, 5, 6)]].max(axis=1)
@@ -43,6 +45,7 @@ def main():
         ps, sg = [], []
         for p in cnt:
             y = g[g.policy == p].sort_values("eval_seed").total_reward.values
+            assert len(x) == len(y) == 20, (sc, p)
             diff = x - y
             ps.append(1.0 if np.allclose(diff, 0) else wilcoxon(x, y).pvalue); sg.append(np.mean(diff))
         for p, q, s in zip(cnt, holm(ps), sg):

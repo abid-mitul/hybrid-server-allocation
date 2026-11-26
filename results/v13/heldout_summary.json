@@ -27,7 +27,7 @@
    "learned_decisions": 114
   }
  },
- "failures_per_episode_H2": 5.27,
+ "failures_per_episode_H2": 5.22,
  "mean_servers": {
   "H1": {
    "champs": 5.61,
@@ -78,6 +78,7 @@
  },
  "within_0.05": {
   "fixed_c6": 9,
+  "round_robin": 0,
   "fixed_priority": 9,
   "ga": 9,
   "autoscaler_hpa": 14,
