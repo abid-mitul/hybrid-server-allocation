@@ -1,8 +1,7 @@
 __pycache__/
 *.pyc
 .ipynb_checkpoints/
-# outputs written by the scripts (published results are in results/)
-data/
+# raw episode data (data/) is published with the code so that every table can be recomputed
 logs/
 progress/
 results/analysis/all_episodes.csv
