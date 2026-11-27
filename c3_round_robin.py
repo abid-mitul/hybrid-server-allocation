@@ -2,7 +2,7 @@
 
 Round-Robin was evaluated in the main study but not in the first held-out
 run.  It is added here on the same frozen scenarios (heldout_env.py, commit
-67249ee) and the same seeds 30000-30019, so that the held-out table covers
+4474e5a) and the same seeds 30000-30019, so that the held-out table covers
 every baseline named in the thesis proposal.  No other controller is changed.
 
     python c3_round_robin.py --network stable     # repeat for degraded, noisy

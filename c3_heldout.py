@@ -1,6 +1,6 @@
 """v1.3 task C3: evaluation on the held-out structural departures.
 
-Scenarios: heldout_env.py (frozen in commit 67249ee, 2026-11-25, before any
+Scenarios: heldout_env.py (frozen in commit 4474e5a, 2026-11-25, before any
 controller was run on them): H1 correlated service, H2 server failures,
 H3 periodic polling, at N = 200 and 280, in each network regime.
 Evaluation seeds 30000-30019 (new).  Every controller is used exactly as in
