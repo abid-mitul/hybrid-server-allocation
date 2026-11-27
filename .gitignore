@@ -7,3 +7,4 @@ progress/
 results/analysis/all_episodes.csv
 *.db
 .DS_Store
+demo_trace.png

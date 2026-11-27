@@ -1,17 +1,26 @@
-# Hybrid Server Allocation for Industrial Multi-Server Systems
+# CHAMPS: Robust Server Allocation for Industrial Multi-Server Systems
 
-Code, trained models and results for the paper
+Code, trained models, data and results for the paper
 
-> **Integrating Stochastic Optimization and Deep Reinforcement Learning for Resource Allocation in Industrial Multi-Server Systems**
+> **CHAMPS: Integrating Stochastic Modelling and Deep Reinforcement Learning for Robust Resource Allocation in Industrial Multi-Server Systems**
 > Md Abid Hassan Mitul and Most. Nasrin Akhter, Department of Mathematics, Dhaka University of Engineering & Technology (DUET).
 
 The project studies how many servers an industrial installation (for example, a SCADA server layer) should keep active while hundreds of machines send it data. The machines degrade, fail and are repaired, production lines start and stop, and the network delay grows with server congestion. The repository contains:
 
 - a stochastic model of the system: a continuous-time Markov chain of machine conditions, an M/M/c/K server pool and a congestion-coupled network delay;
 - a fast, validated event-driven simulator of this model;
-- allocation controllers: fixed and threshold rules, a GA-tuned rule, a queueing-model policy, a **self-calibrating** queueing policy that estimates the service rate online, PPO agents and an ensemble of PPO agents;
-- the proposed **hybrid controller**, which uses the calibrated queueing model by default and hands the decision to the PPO ensemble when the measured sojourn time persistently exceeds the model's prediction;
-- an evaluation over 69 scenarios (seen and unseen loads, parameter mismatch and structural mismatch) with paired statistical tests.
+- allocation controllers: fixed allocations, Round-Robin, a threshold rule, a GA-tuned rule, a Kubernetes-type autoscaler, queueing-model policies, single PPO agents and a PPO ensemble;
+- **CHAMPS**, which uses a self-calibrating queueing model by default, checks it with a CUSUM test, and hands the decision to the PPO ensemble after a detected mismatch, never below the autoscaler or model allocation;
+- an evaluation over 69 scenarios and 18 held-out structural departures, with paired statistical tests.
+
+## Quick start
+
+```bash
+pip install -r requirements.txt
+python demo.py          # one-minute demonstration: simulator check and one bursty-traffic episode
+```
+
+`CODE_MAP.md` links every file to the section of the paper it implements.
 
 ## Main result
 
@@ -19,22 +28,25 @@ Mean shortfall relative to the best fixed allocation of each scenario (lower is 
 
 | Controller | Mean | Worst case |
 |---|---|---|
-| **Proposed hybrid** | **0.059** | 0.789 |
-| PPO ensemble | 0.085 | 0.664 |
-| PPO (single agent) | 0.153 | 1.036 |
+| **CHAMPS** | **0.030** | **0.402** |
+| CHAMPS without the PPO agents | 0.053 | 0.571 |
+| Autoscaler (Kubernetes HPA type) | 0.063 | 0.661 |
+| PPO ensemble | 0.084 | 0.664 |
 | Fixed 6 servers | 0.177 | 1.381 |
-| Self-calibrating model | 0.215 | 1.932 |
-| Queueing model (fixed parameters) | 0.249 | 2.074 |
-| GA-tuned rule | 0.456 | 2.210 |
-| Threshold rule | 0.513 | 2.769 |
+| Self-calibrating queueing model | 0.209 | 1.932 |
+| GA-tuned rule | 0.461 | 2.210 |
+| Threshold rule | 0.519 | 2.769 |
+| Round-Robin | 2.756 | 6.478 |
 
-A calibrated queueing model is sufficient whenever the structure of the model holds; learning is decisive when work arrives or is processed in bursts. Full tables are produced by `analysis/make_tables.py`.
+CHAMPS retains on average 99.4% of the reward of the best fixed allocation. The full tables are produced by `analysis/v13_tables.py` (results in `results/v13/`).
 
 ## Repository structure
 
 ```
 .
-├── parameters.py               model parameters (engineering estimates)
+├── demo.py                     one-minute demonstration
+├── CODE_MAP.md                 file-by-file map to the paper
+├── parameters.py               model parameters
 ├── fast_env.py                 event-driven simulator (Gymnasium environment, Numba)
 ├── factory_env.py              independent SimPy reference implementation
 ├── validate_fast_env.py        validation against SimPy and the M/M/c/K closed form
@@ -112,7 +124,19 @@ python evaluate_structural.py --network stable --set2
 
 New results are written to `data/`; the published ones are in `results/`.
 
-**5. Tables and figures of the paper** (about 15 seconds):
+**5. Version 1.3 experiments** (CUSUM controller, ablation without agents, held-out departures, false alarms):
+
+```bash
+python v13_ppo_role.py --study normal --network stable  # repeat for degraded, noisy; also --study x2 and --study switch
+python c3_heldout.py --network stable                    # repeat for degraded, noisy
+python c3_round_robin.py --network stable
+python c4_false_alarm.py --network stable              # repeat for degraded, noisy; then --summary
+python analysis/v13_tables.py
+python analysis/v13_heldout_summary.py
+python analysis/v13_metrics_table.py
+```
+
+**6. Earlier tables and figures** (about 15 seconds):
 
 ```bash
 python analysis/sensitivity_sweep.py
@@ -123,7 +147,7 @@ python analysis/make_figures.py
 
 ## Model parameters
 
-The parameters in `parameters.py` describe a representative SCADA server layer of a textile plant. They are engineering estimates, not measurements from a particular plant; reward weights and costs are design choices. The paper examines the sensitivity of the results to these values (63 parameter variations) and evaluates the controllers when the true parameters and the model structure differ from those assumed.
+The parameters in `parameters.py` describe a representative SCADA server layer of a textile plant. They are grounded in published measurement and reliability studies where such studies exist and are otherwise assumed (Section 6.2 and Table 2 of the paper); they are not measurements from a particular plant, and reward weights and costs are design choices. The paper examines the sensitivity of the results to these values (90 variations of 12 parameters) and evaluates the controllers when the true parameters and the model structure differ from those assumed.
 
 ## Citation
 
